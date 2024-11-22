@@ -1,14 +1,20 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// Resize the canvas dynamically
-canvas.width = Math.min(window.innerWidth, 400);
-canvas.height = Math.min(window.innerHeight, 400);
+// Resize the canvas dynamically based on window size
+function resizeCanvas() {
+  canvas.width = Math.min(window.innerWidth, 600);  // Max width 600px for desktop
+  canvas.height = Math.min(window.innerHeight, 600);  // Max height 600px for desktop
 
-// Constants
-const tileSize = canvas.width / 20;
-const rows = Math.floor(canvas.height / tileSize);
-const cols = Math.floor(canvas.width / tileSize);
+  // Recalculate tile size based on canvas size
+  const tileSize = Math.floor(canvas.width / 20);
+  const rows = Math.floor(canvas.height / tileSize);
+  const cols = Math.floor(canvas.width / tileSize);
+
+  return { tileSize, rows, cols };
+}
+
+let { tileSize, rows, cols } = resizeCanvas();
 
 // Game variables
 let pacman = { x: 1, y: 1, dx: 0, dy: 0 };
@@ -21,7 +27,7 @@ let dots = [];
 let score = 0;
 let level = 1;
 
-// Generate maze: 1 for walls, 0 for paths
+// Maze and dot initialization
 const mazeTemplate = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -34,7 +40,6 @@ const mazeTemplate = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
 
-// Initialize maze and dots
 function initializeMaze() {
   maze = [];
   dots = [];
@@ -48,10 +53,32 @@ function initializeMaze() {
 
 initializeMaze();
 
-// Draw maze, dots, Pac-Man, ghosts, and score
-// Functions from original script remain unchanged
+// Functions to draw maze, dots, Pac-Man, ghosts, etc., remain the same
 
-// Touch input handling
+// Handle keyboard input for desktop
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowUp") {
+    pacman.dx = 0;
+    pacman.dy = -1;
+  } else if (e.key === "ArrowDown") {
+    pacman.dx = 0;
+    pacman.dy = 1;
+  } else if (e.key === "ArrowLeft") {
+    pacman.dx = -1;
+    pacman.dy = 0;
+  } else if (e.key === "ArrowRight") {
+    pacman.dx = 1;
+    pacman.dy = 0;
+  }
+});
+
+// Resize canvas on window resize
+window.addEventListener("resize", () => {
+  ({ tileSize, rows, cols } = resizeCanvas());
+  initializeMaze();
+});
+
+// Touch input handling for mobile devices
 let startX, startY;
 canvas.addEventListener("touchstart", (e) => {
   const touch = e.touches[0];
@@ -73,11 +100,11 @@ canvas.addEventListener("touchend", (e) => {
   }
 });
 
-// Optimize rendering performance
+// Game loop for rendering
 let frameCount = 0;
 function gameLoop() {
   frameCount++;
-  if (frameCount % 2 === 0) { // Render every other frame
+  if (frameCount % 2 === 0) { // Skip every other frame to improve performance
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawMaze();
     drawDots();
