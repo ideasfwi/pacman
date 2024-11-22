@@ -7,7 +7,7 @@ body {
   height: 100vh;
   background-color: #000;
   color: #fff;
-  flex-direction: column; /* Stack the title and canvas */
+  flex-direction: column; /* Stack title and canvas */
 }
 
 h1 {
