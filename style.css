@@ -7,6 +7,15 @@ body {
   height: 100vh;
   background-color: #000;
   color: #fff;
+  flex-direction: column; /* Added to stack title and canvas */
+}
+
+h1 {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: yellow;
+  text-shadow: 2px 2px 4px black;
+  margin-bottom: 20px; /* Added margin for space between title and canvas */
 }
 
 #game {
